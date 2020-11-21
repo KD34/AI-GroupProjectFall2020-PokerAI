@@ -193,6 +193,7 @@ def threeOfKindWithPairProb(possibleCardsInDeck, hand):
     return fullHouseProb
 
 def fourOfAKindProb(possibleCardsInDeck, hand):
+    
 
 def fiveCardsInSqeuenceSameSuitProb():
     straightFlush = fiveCardsSameSuitProb * fiveCardsInSequenceProb
@@ -220,7 +221,7 @@ def royalFlushProb(possibleCardsInDeck, hand):
         
         else:
             part1Pct = 0
-            
+
 
         if isAllCardsSameSuit(possibleCardsInDeck, card10, cardJ, cardQ, cardK, cardA):
             part2Pct = (1/deckRemainingSize) * (1/deckRemainingSize - 1) * (1/deckRemainingSize - 2) * (1/deckRemainingSize - 3) * (1/deckRemainingSize - 4)
