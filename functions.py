@@ -2,16 +2,29 @@ import random
 from collections import defaultdict 
 import sys
 
-def calcFrequency(arr):
+def calcFrequency(hand):
+    freqDict = {}
     
-    freq = [0] * len(arr)
-
-    for x in arr:
-        freq[x] = freq[x] + 1
-
-    return freq
+    # Mark all array elements as not  visited
+    visited = [False for i in range(len(hand))]
         
+    #Traverse through array elements
+    #and count frequencies
 
+    for i in range(len(hand)):
+        #Skip this element if already processed
+        if visited[i] == True:
+            continue
+        
+        #Count frequency
+        count = 1
+        for j in range (i + 1, len(hand), 1):
+            if hand[i] == hand[j]:
+                visited[j]  = True
+                count += 1
+        freqDict[hand[i]] = count
+        
+        print(hand[i], count)
 
 
 ################ Dealer Functions ################
@@ -70,8 +83,28 @@ def determineHandStrength(deck, possibleCardsInDeck, removedCardFromDeck, hand):
 
 
 def twoCardsSameRank(possibleCardsInDeck, hand):
+    freqDict = {}
+    freqDict = calcFrequency(hand)
+    cardsWithPairs = []
+    pairCount = 0
+    pairPercentage = 0
 
-    freq = calcFrequency(hand)
+    #Traverse through dictionary and check if there is a pair 
+    for key in freqDict:
+        if freqDict[key] == 2:
+            print("This card has a pair of two")
+            #add this card rank to an array
+            cardsWithPairs.append(key)
+    for card in range(len(cardsWithPairs)):
+        if card in possibleCardsInDeck:
+            pairCount = possibleCardsInDeck.count(card)
+    
+    pairPercentage = pairCount/len(possibleCardsInDeck)
+
+    return pairPercentage
+
+            
+
 
 def threeOfAKindProb(possibleCardsInDeck, hand):
 
