@@ -116,6 +116,24 @@ def AIStartPhase():
 def AIActingPhase():
     #call check strengthOfHand function
 
+    #if AI has a pair in hand
+        #call check function
+        #increment numberOfChecks
+
+    #if AI has a pair in hand AND other players Raise OR Bet
+        #call AI match function
+        #subtract current money that AI has
+
+    #if AI had no pair in hand
+        #if players Bet or Raise AND AI has >= 30% og getting one of the desired hands
+            #AI matched bets "Call"
+        #if players Bet or RAISE AND AI had < 20% chance of getting one of the desired hands
+            #call AI fold function
+            #AI Losses "money"
+        #    
+        
+         
+
 
 
 def distanceBetweenCards(card1Rank, card2Rank):
@@ -215,8 +233,6 @@ def flushProb(possibleCardsInDeck, hand):
     return flushPct
     
     
-
-
 
 def fullHouseProb(possibleCardsInDeck, hand):
     fullHouseProb = 0
@@ -339,13 +355,6 @@ def revealHand(players):
     for player in players:
         for card in player.hand:
             print(card)
-
-
-
-def checkStrengthOfHand(remainngDeck,hand, cardOnTable):
-
-
-def playRound(deck, players)
 
 
 
