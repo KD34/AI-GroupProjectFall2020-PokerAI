@@ -130,7 +130,7 @@ def distanceBetweenCards(card1Rank, card2Rank):
 
 
 
-def twoCardsSameRank(possibleCardsInDeck, hand):
+def pairProbability(possibleCardsInDeck, hand):
     freqDict = {}
     freqDict = calcFrequency(hand)
     cardsWithPairs = []
@@ -152,7 +152,7 @@ def twoCardsSameRank(possibleCardsInDeck, hand):
     return pairPercentage
 
 
-#def twoDifferentPairs(possibleCardsInDeck, hand):
+#def twoPairProbability(possibleCardsInDeck, hand):
 
 
 
@@ -181,14 +181,7 @@ def threeOfAKindProb(possibleCardsInDeck, hand):
     return threeOfKindPct
 
 
-
-
-def fullHouseProb(possibleCardsInDeck, hand):
-    fullHouseProb = 0
-    fullHouseProb = threeOfAKindProb(possibleCardsInDeck, hand) * twoCardsSameRank(possibleCardsInDeck, hand)
-    return fullHouseProb
-
-def fiveCardsInSequenceProb(possibleCardsInDeck, hand):
+def straightProb(possibleCardsInDeck, hand):
     card1 = hand[0]
     card2 = hand[1]
     straightPercentage = 0
@@ -200,7 +193,7 @@ def fiveCardsInSequenceProb(possibleCardsInDeck, hand):
 
     #straightPercentage = (number possibleValues left in deck by array/deckRemaingSize)
 
-def fiveCardsSameSuitProb(possibleCardsInDeck, hand):
+def flushProb(possibleCardsInDeck, hand):
     card1 = hand[0]
     card2 = hand[1]
 
@@ -225,15 +218,38 @@ def fiveCardsSameSuitProb(possibleCardsInDeck, hand):
 
 
 
-def threeOfKindWithPairProb(possibleCardsInDeck, hand):
+def fullHouseProb(possibleCardsInDeck, hand):
     fullHouseProb = 0
     fullHouseProb = threeOfAKindProb(possibleCardsInDeck, hand) * twoCardsSameRank(possibleCardsInDeck, hand)
     return fullHouseProb
 
-#def fourOfAKindProb(possibleCardsInDeck, hand):
+def fourOfAKindProb(possibleCardsInDeck, hand):
+    fourOfAKindProb = 0
+    card1 = hand[0]
+    card2 = hand[1]
+
+    deckRemainingSize = len(possibleCardsInDeck)
+
+    numOfCard1 = 0
+    numOfCard2 = 0
+
+    for card in possibleCardsInDeck:
+        if card.rank = card1.rank:
+            numOfCard1 += 1
+        if card.rank == card2.rank:
+            numOfCard2 += 1
+
+    if card1.rank != card2.rank:
+        if numOfCard1 >= 3:
+            fourOfAKindProb = (numOfCard1/deckRemainingSize) * (numOfCard1 - 1/ deckRemainingSize - 1 ) * (numOfCard1 -2 / deckRemainingSize - 2) 
+        if numOfCard2 >= 3:
+            fourOfAKindProb = (numOfCard1/deckRemainingSize) * (numOfCard1 - 1/ deckRemainingSize - 1 ) * (numOfCard1 -2 / deckRemainingSize - 2)     
+
+    if card1.rank == card2.rank:
+        fourOfAKindProb = (numOfCard1/deckRemainingSize) * (numOfCard1 - 1/ deckRemainingSize - 1 )
     
 
-def fiveCardsInSqeuenceSameSuitProb():
+def straightFlushProb():
     straightFlush = fiveCardsSameSuitProb * fiveCardsInSequenceProb
     return straightFlush
 
