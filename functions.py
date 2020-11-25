@@ -64,6 +64,7 @@ def dealRiverCard(deck):
 
 def waitForNextRound():
     print("AI will wait for next round")
+    #Call AIStartPhase
 
 def leaveTable():
     print("AI left the table")
@@ -74,11 +75,48 @@ def bind():
 
 def determineHandStrength(deck, possibleCardsInDeck, removedCardFromDeck, hand):
     hand.sort()
+    card1  = hand[0]
+    card2 = hand[1]
+        
+
+    deckRemaingSize = len(possibleCardsInDeck)
+
+    if card1 in deck or card2 in deck:
+        #call twoCardsSameRank function
+    
+    #two different pairs if statement
+
+    elif card1 in deck and card2 in deck:
+        #call threeCardsSameRank function
+
+    #figure out how to call flush function
+
+    elif
 
     winningChance = 0
     ######
 
     return winningChance
+
+
+def AIStartPhase():
+
+    choiceArr = ["bind", "no bind", "leave"]
+
+    #pick random element from choice arr
+        #decsion = elemetFromChoiceArray
+    #if AI chooses bind:
+        #call function that runs option for bind
+    #if AI chooses no bind
+        #call function that runs option for bind
+    #if AU chooses leave:
+        #call function that runs option for leave
+
+
+def AIActingPhase():
+    #call check strengthOfHand function
+
+
 
 def distanceBetweenCards(card1Rank, card2Rank):
     cardDifference = 0
@@ -114,7 +152,7 @@ def twoCardsSameRank(possibleCardsInDeck, hand):
     return pairPercentage
 
 
-def twoDifferentPairs(possibleCardsInDeck, hand):
+#def twoDifferentPairs(possibleCardsInDeck, hand):
 
 
 
@@ -192,7 +230,7 @@ def threeOfKindWithPairProb(possibleCardsInDeck, hand):
     fullHouseProb = threeOfAKindProb(possibleCardsInDeck, hand) * twoCardsSameRank(possibleCardsInDeck, hand)
     return fullHouseProb
 
-def fourOfAKindProb(possibleCardsInDeck, hand):
+#def fourOfAKindProb(possibleCardsInDeck, hand):
     
 
 def fiveCardsInSqeuenceSameSuitProb():
@@ -281,13 +319,19 @@ def check(winningChance):
 
 
 
-
-
-
 def revealHand(players):
     for player in players:
         for card in player.hand:
             print(card)
+
+
+
+def checkStrengthOfHand(remainngDeck,hand, cardOnTable):
+
+
+def playRound(deck, players)
+
+
 
 
    
