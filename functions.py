@@ -2,59 +2,86 @@ import random
 from collections import defaultdict 
 import sys
 
-def calcFrequency(hand):
-    freqDict = {}
-    
-    # Mark all array elements as not  visited
-    visited = [False for i in range(len(hand))]
-        
-    #Traverse through array elements
-    #and count frequencies
+from Deck import Deck
+from Card import Card
+from CardRank import CardRank
+from CardSuit import CardSuit
+from Player import Player
 
-    for i in range(len(hand)):
-        #Skip this element if already processed
-        if visited[i] == True:
-            continue
-        
-        #Count frequency
-        count = 1
-        for j in range (i + 1, len(hand), 1):
-            if hand[i] == hand[j]:
-                visited[j]  = True
-                count += 1
-        freqDict[hand[i]] = count
-        
-        print(hand[i], count)
+
+
+
+def calcFrequencyOfRanks(deck, card):
+    freqDict = {}
+    count = 0
+    
+    #calculate the frequency of the rank of the given card within the deck
+
+    for x in deck.cards:
+        if x.rank == card.rank:
+            freqDict[card] = count + 1
+            count = count + 1
+
+    return freqDict
+
+def calcFrequencyOfSuits(deck, card):
+    freqDict = {}
+    count = 0
+    
+    #calculate the frequency of the rank of the given card within the deck
+
+    for x in deck.cards:
+        if x.suit == card.suit:
+            freqDict[card] = count + 1
+            count = count + 1
+
+    return freqDict
 
 
 ################ Dealer Functions ################
 def shuffleDeck(deck):
-    random.shuffle(deck)
+    random.shuffle(deck.cards)
     return deck
 
-def dealHoleCards(deck, players):
+def dealHoleCards(deck, AI):
     for x in range(2):
-        for player in players:
-            player.append(deck[x])
+        AI.hand.addCardToDeck(deck.cards[0])
+        deck.removeCardFromDeck(deck.cards[0])
+        deck = shuffleDeck(deck)
+    return deck
 
-def dealFlopCards(deck):
+       
+def dealFlopCards(deck, AI):
+    flopCards = []
     for x in range(3):
-        flop[x] = deck[x]
-    return flop
+        AI.hand.addCardToDeck(deck.cards[0])
+        flopCards[x] = deck.cards[0]
+        deck.removeCardFromDeck(deck.cards[0])
+        deck = shuffleDeck(deck)
+    return deck, flopCards
 
 def dealBurnCard(deck):
     burnCard = deck.pop()
-    return burnCard
+    AI.hand.addCardToDeck(deck.cards[0])
+    deck.removeCardFromDeck(deck.cards[0])
+    deck = shuffleDeck(deck)
+    return deck, burnCard
 
 
 def dealTurnCard(deck):
     turnCard = deck.pop()
-    return turnCard
+    AI.hand.addCardToDeck(deck.cards[0])
+    deck.removeCardFromDeck(deck.cards[0])
+    deck = shuffleDeck(deck)
+    return deck, turnCard
 
 
 def dealRiverCard(deck):
     riverCard = deck.pop()
-    return riverCard
+    AI.hand.addCardToDeck(deck.cards[0])
+    deck.removeCardFromDeck(deck.cards[0])
+    deck = shuffleDeck(deck)
+    return deck, riverCard
 
     
 
@@ -71,7 +98,7 @@ def leaveTable():
     sys.exit(0)
 
 def bind():
-    print("AI has entered the round")
+    print("AI has entered the round and placed a bet")
 
 def determineHandStrength(deck, possibleCardsInDeck, removedCardFromDeck, hand):
     hand.sort()
@@ -79,19 +106,19 @@ def determineHandStrength(deck, possibleCardsInDeck, removedCardFromDeck, hand):
     card2 = hand[1]
         
 
-    deckRemaingSize = len(possibleCardsInDeck)
+    deckRemainingSize = len(possibleCardsInDeck)
 
-    if card1 in deck or card2 in deck:
+    #if card1 in deck or card2 in deck:
         #call twoCardsSameRank function
     
     #two different pairs if statement
 
-    elif card1 in deck and card2 in deck:
+    #elif card1 in deck and card2 in deck:
         #call threeCardsSameRank function
 
     #figure out how to call flush function
 
-    elif
+
 
     winningChance = 0
     ######
@@ -99,9 +126,9 @@ def determineHandStrength(deck, possibleCardsInDeck, removedCardFromDeck, hand):
     return winningChance
 
 
-def AIStartPhase():
+#def AIStartPhase():
 
-    choiceArr = ["bind", "no bind", "leave"]
+    #choiceArr = ["bind", "no bind", "leave"]
 
     #pick random element from choice arr
         #decsion = elemetFromChoiceArray
@@ -113,7 +140,7 @@ def AIStartPhase():
         #call function that runs option for leave
 
 
-def AIActingPhase():
+#def AIActingPhase():
     #call check strengthOfHand function
 
     #if AI has a pair in hand
@@ -149,59 +176,111 @@ def distanceBetweenCards(card1Rank, card2Rank):
 
 
 def pairProbability(possibleCardsInDeck, hand):
-    freqDict = {}
-    freqDict = calcFrequency(hand)
-    cardsWithPairs = []
+
+    card1 = hand.cards[0]
+    card2 = hand.cards[1]
+
+    #possibleCardsInDeck.removeCardFromDeck(card1)
+    #possibleCardsInDeck.removeCardFromDeck(card2)
+
+    freqCard1 = {}
+    freqCard2 = {}
+
+    card1Count = 0
+    card2Count = 0
+
+    #calculate frequency of card1
+    freqCard1 = calcFrequencyOfRanks(possibleCardsInDeck, card1)
+    #calculate the frequency of card2
+    freqCard2 = calcFrequencyOfRanks(possibleCardsInDeck, card2)
+    
     pairCount = 0
     pairPercentage = 0
 
-    #Traverse through dictionary and check if there is a pair 
-    for key in freqDict:
-        if freqDict[key] == 2:
-            print("This card has a pair of two")
-            #add this card rank to an array
-            cardsWithPairs.append(key)
-    for card in range(len(cardsWithPairs)):
-        if card in possibleCardsInDeck:
-            pairCount = possibleCardsInDeck.count(card)
+
+     
+    card1Count = freqCard1[card1]
+    card2Count = freqCard2[card2]
+
+    pairCount = card1Count + card2Count
     
-    pairPercentage = pairCount/len(possibleCardsInDeck)
+    pairPercentage = pairCount/len(possibleCardsInDeck.cards)
 
     return pairPercentage
 
 
-#def twoPairProbability(possibleCardsInDeck, hand):
+def twoPairsProbability(possibleCardsInDeck, hand):
+    card1 = hand.cards[0]   
+    card2 = hand.cards[1]
+
+    #possibleCardsInDeck.removeCardFromDeck(card1)
+    #possibleCardsInDeck.removeCardFromDeck(card2)
+
+    freqCard1 = {}
+    freqCard2 = {}
+
+    card1Count = 0
+    card2Count = 0
+
+    pairCount = 0
+    pairPercentage = 0
+
+    #calculate frequency of card1
+    freqCard1 = calcFrequencyOfRanks(possibleCardsInDeck, card1)
+    #calculate the frequency of card2
+    freqCard2 = calcFrequencyOfRanks(possibleCardsInDeck, card2)
+    
+    pairCount = 0
+    pairPercentage = 0
+
+     
+    card1Count = freqCard1[card1]
+    card2Count = freqCard2[card2]
+
+    pairCount = card1Count + card2Count
+    
+    pairPercentage = (card1Count/len(possibleCardsInDeck.cards)) * (card2Count/len(possibleCardsInDeck.cards))
+
+    return pairPercentage
 
 
 
 def threeOfAKindProb(possibleCardsInDeck, hand):
-    freqDict = {}
-    freqDict = calcFrequency(hand)
-    cardsWithPairs = []
-    pairCount = 0
-    threeOfKindPct = 0
-    card1 = hand[0]
-    card2 = hand[1]
+    card1 = hand.cards[0]   
+    card2 = hand.cards[1]
 
-    #Traverse through dictionary and check if there is a pair 
-    for key in freqDict:
-        if freqDict[key] == 3:
-            print("This card has a pair of three")
-            #add this card rank to an array
-            cardsWithPairs.append(key)
-    for card in range(len(cardsWithPairs)):
-        if card in possibleCardsInDeck:
-            pairCount = possibleCardsInDeck.count(card)
+    #possibleCardsInDeck.removeCardFromDeck(card1)
+    #possibleCardsInDeck.removeCardFromDeck(card2)
+
+    freqCard1 = {}
+    freqCard2 = {}
+
+    card1Count = 0
+    card2Count = 0
+
+    threeOfAKindCount = 0
+    threeOfAKindPct = 0
+
+    #calculate frequency of card1
+    freqCard1 = calcFrequencyOfRanks(possibleCardsInDeck, card1)
+    #calculate the frequency of card2
+    freqCard2 = calcFrequencyOfRanks(possibleCardsInDeck, card2)
     
-    if card1 and card2 in possibleCardsInDeck:
-        threeOfKindPct = (possibleCardsInDeck.count(card1) + possibleCardsInDeck.count(card2))/len(possibleCardsInDeck)
+     
+    card1Count = freqCard1[card1]
+    card2Count = freqCard2[card2]
 
-    return threeOfKindPct
+    threeOfAKindCount = card1Count + card2Count
+    
+    threeOfAKindPct = (threeOfAKindCount/ len(possibleCardsInDeck.cards))
+
+    return threeOfAKindPct
+    
 
 
 def straightProb(possibleCardsInDeck, hand):
-    card1 = hand[0]
-    card2 = hand[1]
+    card1 = hand.cards[0]
+    card2 = hand.cards[1]
     straightPercentage = 0
 
     cardDifference = distanceBetweenCards(card1.rank, card2.rank)
@@ -212,57 +291,79 @@ def straightProb(possibleCardsInDeck, hand):
     #straightPercentage = (number possibleValues left in deck by array/deckRemaingSize)
 
 def flushProb(possibleCardsInDeck, hand):
-    card1 = hand[0]
-    card2 = hand[1]
+    card1 = hand.cards[0]
+    card2 = hand.cards[1]
 
-    card1Suit = card1.suit
-    card2Suit = card2.suit
     card1Count = 0
     card2Count = 0
 
+    freqCard1 = {}
+    freqCard2 = {}
+
     flushPct = 0
 
-    for card in possibleCardsInDeck:
-        if card.suit == card1Suit:
-            card1Count += 1
-        if card.suit == card2Suit:
-            card2Count += 1
 
-    flushPct = max((card1Count/len(possibleCardsInDeck)), (card2Count/len(possibleCardsInDeck)))
+    freqCard1 = calcFrequencyOfSuits(possibleCardsInDeck, card1)
+    freqCard2 = calcFrequencyOfSuits(possibleCardsInDeck, card2)
+
+    card1Count = freqCard1[card1]
+    card2Count = freqCard2[card2]
+  
+
+    flushPct = max((card1Count/len(possibleCardsInDeck.cards)), (card2Count/len(possibleCardsInDeck.cards)))
 
     return flushPct
     
     
 
 def fullHouseProb(possibleCardsInDeck, hand):
-    fullHouseProb = 0
-    fullHouseProb = threeOfAKindProb(possibleCardsInDeck, hand) * twoCardsSameRank(possibleCardsInDeck, hand)
+    threeOfAKind = 0.0
+    pairProb = 0.0
+
+
+    threeOfAKind = float(threeOfAKindProb(possibleCardsInDeck, hand))
+    pairProb = float(pairProbability(possibleCardsInDeck, hand))
+    fullHouseProb = threeOfAKind * pairProb
+
     return fullHouseProb
 
 def fourOfAKindProb(possibleCardsInDeck, hand):
+
     fourOfAKindProb = 0
-    card1 = hand[0]
-    card2 = hand[1]
+    fourOfAKindProbCard1 = 0
+    fourOfAKindProbCard2 = 0
 
-    deckRemainingSize = len(possibleCardsInDeck)
+    card1 = hand.cards[0]
+    card2 = hand.cards[1]
 
-    numOfCard1 = 0
-    numOfCard2 = 0
+    card1Count = 0
+    card2Count = 0
 
-    for card in possibleCardsInDeck:
-        if card.rank = card1.rank:
-            numOfCard1 += 1
-        if card.rank == card2.rank:
-            numOfCard2 += 1
+    freqCard1 = {}
+    freqCard2 = {}
+
+
+    freqCard1 = calcFrequencyOfRanks(possibleCardsInDeck, card1)
+    freqCard2 = calcFrequencyOfRanks(possibleCardsInDeck, card2)
+
+    card1Count = freqCard1[card1]
+    card2Count = freqCard2[card2]
+
+    deckRemainingSize = len(possibleCardsInDeck.cards)
 
     if card1.rank != card2.rank:
-        if numOfCard1 >= 3:
-            fourOfAKindProb = (numOfCard1/deckRemainingSize) * (numOfCard1 - 1/ deckRemainingSize - 1 ) * (numOfCard1 -2 / deckRemainingSize - 2) 
-        if numOfCard2 >= 3:
-            fourOfAKindProb = (numOfCard1/deckRemainingSize) * (numOfCard1 - 1/ deckRemainingSize - 1 ) * (numOfCard1 -2 / deckRemainingSize - 2)     
+        if card1Count >= 3:
+            fourOfAKindProbCard1 = (card1Count/deckRemainingSize) * (card1Count - 1/ deckRemainingSize - 1 ) * (card1Count -2 / deckRemainingSize - 2) 
+        if card2Count>= 3:
+            fourOfAKindProbCard2 = (card2Count/deckRemainingSize) * (card2Count - 1/ deckRemainingSize - 1 ) * (card2Count -2 / deckRemainingSize - 2)
 
-    if card1.rank == card2.rank:
-        fourOfAKindProb = (numOfCard1/deckRemainingSize) * (numOfCard1 - 1/ deckRemainingSize - 1 )
+        fourOfAKindProb = fourOfAKindProbCard1 + fourOfAKindProbCard2     
+
+    elif card1.rank == card2.rank:
+        fourOfAKindProb = (card1Count/deckRemainingSize) * (card1Count - 1/ deckRemainingSize - 1 )
+
+
+    return fourOfAKindProb
     
 
 def straightFlushProb():
@@ -285,23 +386,24 @@ def royalFlushProb(possibleCardsInDeck, hand):
 
 
 
-    if card1.rank >= 10 or card2.rank >= 10:
-        if isRankInDeck(possibleCardsInDeck, 10) and isRankInDeck(possibleCardsInDeck, 11) and isRankInDeck(possibleCardsInDeck, 12) and isRankInDeck(possibleCardsInDeck, 13) and isRankInDeck(possibleCardsInDeck, 14):
-            part1Pct = (numOf10InDeck/deckRemainingSize * (numOfJInDeck/deckRemainingSize-1) * (numOfQInDeck/deckRemainingSize-2) * (numOfKInDeck/deckRemainingSize -3) * (numOfAInDeck/deckRemainingSize - 4)
+    #if card1.rank >= 10 or card2.rank >= 10:
+        #if isRankInDeck(possibleCardsInDeck, 10) and isRankInDeck(possibleCardsInDeck, 11) and isRankInDeck(possibleCardsInDeck, 12) and isRankInDeck(possibleCardsInDeck, 13) and isRankInDeck(possibleCardsInDeck, 14):
+            #part1Pct = (numOf10InDeck/deckRemainingSize * (numOfJInDeck/deckRemainingSize-1) * (numOfQInDeck/deckRemainingSize-2) * (numOfKInDeck/deckRemainingSize -3) * (numOfAInDeck/deckRemainingSize - 4)
         
-        else:
-            part1Pct = 0
+        #else:
+            #part1Pct = 0
 
 
-        if isAllCardsSameSuit(possibleCardsInDeck, card10, cardJ, cardQ, cardK, cardA):
-            part2Pct = (1/deckRemainingSize) * (1/deckRemainingSize - 1) * (1/deckRemainingSize - 2) * (1/deckRemainingSize - 3) * (1/deckRemainingSize - 4)
-        else:
-            part2Pct = 0
+        #if isAllCardsSameSuit(possibleCardsInDeck, card10, cardJ, cardQ, cardK, cardA):
+            #part2Pct = (1/deckRemainingSize) * (1/deckRemainingSize - 1) * (1/deckRemainingSize - 2) * (1/deckRemainingSize - 3) * (1/deckRemainingSize - 4)
+
+        #else:
+            #part2Pct = 0
 
         
-        royalSraightFlushPct = part1Pct * part2Pct 
+        #royalSraightFlushPct = part1Pct * part2Pct 
 
-        return royalSraightFlushPct
+        #return royalSraightFlushPct
         
 
 
@@ -355,6 +457,68 @@ def revealHand(players):
     for player in players:
         for card in player.hand:
             print(card)
+
+
+#def firstRound():
+
+#def secondRound():
+
+#def thirdRound():
+
+
+
+
+
+betLimit = 20
+
+cards = []
+
+
+deck = Deck(cards)
+
+#player1 = Player("Sue")
+#player2 = Player("Our AI")
+
+#players = [player1, player2]
+
+
+deck.addAllCardsToDeck()
+deck = shuffleDeck(deck)
+
+AI = Player("AI")
+
+
+dealHoleCards(deck, AI)
+
+AI.toString()
+
+#Call each probability function
+pairProbability = pairProbability(deck, AI.hand)
+
+twoPairsProbability = twoPairsProbability(deck, AI.hand)
+
+threeOfAKindProb = threeOfAKindProb(deck, AI.hand)
+
+flushProb = flushProb(deck, AI.hand)
+
+# fix full house float error
+fullHouseProb = threeOfAKindProb * pairProbability
+
+fourOfAKindProb = fourOfAKindProb(deck, AI.hand)
+
+
+
+
+
+print("One Pair: " + str(pairProbability))
+print("Two Pair: " + str(twoPairsProbability))
+print("Three of a Kind: " + str(threeOfAKindProb))
+print("Flush: " + str(flushProb))
+print("Full House: " + str(fullHouseProb))
+print("Four of a Kind: " + str(fourOfAKindProb))
+#deck.toString()
+
+
 
 
 

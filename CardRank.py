@@ -1,11 +1,11 @@
 class CardRank:
 
+    ranks = {}
 
-    def __init__(self, ranks):
+    def __init__(self):
         super().__init__()
-        self.ranks = ranks
 
-    def addRanks(self, ranks):
+    def addRanks(self):
         self.ranks["Two"] = 2
         self.ranks["Three"] = 3
         self.ranks["Four"] = 4
@@ -19,6 +19,9 @@ class CardRank:
         self.ranks["Queen"] = 12
         self.ranks["King"] = 13
         self.ranks["Ace"] = 14
+
+    def getRanks(self):
+        return self.ranks
         
 
 

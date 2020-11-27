@@ -1,8 +1,10 @@
 class CardSuit:
 
-    def __init__(self, suits):
+    suits = []
+
+    def __init__(self):
         super().__init__()
-        self.suits = suits
+        
 
 
     def addSuits(self):
@@ -10,3 +12,8 @@ class CardSuit:
         self.suits.append("Clubs")
         self.suits.append("Spades")
         self.suits.append("Diamonds")
+
+    def getSuits(self):
+        return self.suits
+    
+    

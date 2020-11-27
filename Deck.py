@@ -15,11 +15,29 @@ class Deck:
         self.cards.remove(card)
 
 
-    #def addAllCardsToDeck(self):
-        #CardRank.addRanks(CardRank,CardRank.ranks)
-        #CardSuit.addSuits(CardSuit, CardSuit.suits)
+    def addAllCardsToDeck(self):
+        suits = []
+        ranks = []   
 
-        
+        cardRanks = CardRank()
+        cardSuits = CardSuit()
+
+        cardRanks.addRanks()
+        cardSuits.addSuits()
+
+        for i in range(len(cardSuits.suits)):
+            for rank in cardRanks.ranks.keys():
+                self.addCardToDeck(Card(rank, cardSuits.suits[i]))
+
+    def toString(self):
+        for card in self.cards:
+             print(card.toString())
+
+    
+    def dealCard(self):
+        removeCardFromDeck(self.cards[0])
+
+       
 
     def isEmpty(self):
         if not self.cards:

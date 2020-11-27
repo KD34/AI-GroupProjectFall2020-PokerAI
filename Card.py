@@ -12,7 +12,7 @@ class Card:
 
 
     def toString(self):
-        print("Rank: " + str(self.rank) + ", Suit: " + str(self.suit) )
+        return "Rank: " + str(self.rank) + ", Suit: " + str(self.suit) 
     
     def getRank(self):
         return self.rank
