@@ -102,26 +102,21 @@ def bind():
 
 def determineHandStrength(deck, possibleCardsInDeck, removedCardFromDeck, hand):
     hand.sort()
-    card1  = hand[0]
-    card2 = hand[1]
+    card1  = hand.cards[0]
+    card2 = hand.cards[1]
         
 
     deckRemainingSize = len(possibleCardsInDeck)
 
-    #if card1 in deck or card2 in deck:
-        #call twoCardsSameRank function
+    #here is where you use if statements to check the probability of possible hands based on what's in the AI's hand
+
+
+
     
-    #two different pairs if statement
-
-    #elif card1 in deck and card2 in deck:
-        #call threeCardsSameRank function
-
-    #figure out how to call flush function
-
-
-
     winningChance = 0
-    ######
+
+    ##calculate the winning chance here
+
 
     return winningChance
 
@@ -172,9 +167,13 @@ def distanceBetweenCards(card1Rank, card2Rank):
         cardDifference = card2Rank - card1Rank
     else:
         print("cards have the same rank")
+        cardDifference = 0
+
+    return cardDifference
 
 
 
+### here starts all of the hand probability calculations #####
 def pairProbability(possibleCardsInDeck, hand):
 
     card1 = hand.cards[0]
@@ -279,16 +278,93 @@ def threeOfAKindProb(possibleCardsInDeck, hand):
 
 
 def straightProb(possibleCardsInDeck, hand):
+
+    straightPct = 0
+    deckRemainingSize = len(possibleCardsInDeck.cards)
     card1 = hand.cards[0]
     card2 = hand.cards[1]
+
+    card1Rank = 0
+    card2Rank = 0
+
+    cardRankObj = CardRank()
+    cardRankObj.addRanks()
+    cardRanks = cardRankObj.getRanks()
+    
+    minCardValue = 0
+    maxCardValue = 0
     straightPercentage = 0
+    cardValue = 0
 
-    cardDifference = distanceBetweenCards(card1.rank, card2.rank)
 
-    if cardDifference <= 5:
-        ("There is a possibility for a straight")    
+    fiveUpFromMinArr = [0] * 4
+    fiveDownFromMaxArr = [0] * 4
 
-    #straightPercentage = (number possibleValues left in deck by array/deckRemaingSize)
+ 
+    card1Rank = cardRanks[card1.rank]
+    card2Rank = cardRanks[card2.rank]
+
+
+    cardDifference = distanceBetweenCards(card1Rank, card2Rank)
+
+    if cardDifference < 5 and cardDifference != 0:
+        print("There is a possibility for a straight") 
+        if card1Rank > card2Rank:
+            maxCardValue = card1Rank
+            minCardValue = card2Rank
+        else:
+            maxCardValue = card2Rank
+            minCardValue = card1Rank
+
+      
+
+        #Five up from min card
+        cardValue = minCardValue
+
+        for x in range(4):
+            if cardValue == 14:
+                cardValue = 2
+                fiveUpFromMinArr[x] = cardValue
+
+            else:
+                cardValue = cardValue + 1
+                #print(cardValue)
+                #put the card into the before array
+                fiveUpFromMinArr[x] = cardValue
+
+        #Five down from max card
+        cardValue = maxCardValue   
+
+        for x in range(4):
+            if cardValue == 2:
+                cardValue = 14
+                fiveDownFromMaxArr[x] = cardValue
+
+
+            else:
+                cardValue = cardValue - 1
+                #print(cardValue)
+                #put the card into the before array
+                fiveDownFromMaxArr[x] = cardValue
+
+        upCount = 0
+        downCount = 0  
+
+
+        for rank in fiveDownFromMaxArr:
+            if isRankInDeck(possibleCardsInDeck, rank):
+                    downCount += 1
+            
+        for rank in fiveUpFromMinArr:
+            if isRankInDeck(possibleCardsInDeck, rank):
+                upCount =+1
+        
+        straightPct = max(upCount/deckRemainingSize, downCount/deckRemainingSize)
+
+    return straightPct
+        
+        
+
 
 def flushProb(possibleCardsInDeck, hand):
     card1 = hand.cards[0]
@@ -321,8 +397,8 @@ def fullHouseProb(possibleCardsInDeck, hand):
     pairProb = 0.0
 
 
-    threeOfAKind = float(threeOfAKindProb(possibleCardsInDeck, hand))
-    pairProb = float(pairProbability(possibleCardsInDeck, hand))
+    threeOfAKind = threeOfAKindProb(possibleCardsInDeck, hand)
+    pairProb = pairProbability(possibleCardsInDeck, hand)
     fullHouseProb = threeOfAKind * pairProb
 
     return fullHouseProb
@@ -366,75 +442,151 @@ def fourOfAKindProb(possibleCardsInDeck, hand):
     return fourOfAKindProb
     
 
-def straightFlushProb():
-    straightFlush = fiveCardsSameSuitProb * fiveCardsInSequenceProb
+def straightFlushProb(possibleCardsInDeck, hand):
+    flush = flushProb(possibleCardsInDeck, hand)
+    straight = straightProb(possibleCardsInDeck, hand)
+    straightFlush = flush * straight
     return straightFlush
 
 def royalFlushProb(possibleCardsInDeck, hand):
-    card1 = hand[0]
-    card2 = hand[1]
+    card1 = hand.cards[0]
+    card2 = hand.cards[1]
+
+    card1Rank = 0
+    card2Rank = 0
+
+    cardRankObj = CardRank()
+    cardRankObj.addRanks()
+    cardRanks = cardRankObj.getRanks()
+
+    card1Rank = cardRanks[card1.rank]
+    card2Rank = cardRanks[card2.rank]
+
+    cardToCompare = None
+    countSuits = 0
+
 
     part1Pct = 0
     part2Pct = 0
+
+    ranksArr = [10, 11, 12, 13, 14]
+    #Here I can remove the element that had the same rank as one of the AI's cards
+    royalCards = []
 
     numOf10InDeck = numOfRankInDeck(possibleCardsInDeck, 10)
     numOfJInDeck = numOfRankInDeck(possibleCardsInDeck, 11)
     numOfQInDeck = numOfRankInDeck(possibleCardsInDeck, 12)
     numOfKInDeck = numOfRankInDeck(possibleCardsInDeck, 13)
     numOfAInDeck = numOfRankInDeck(possibleCardsInDeck, 14)
-    deckRemainingSize = len(possibleCardsInDeck)
+    deckRemainingSize = len(possibleCardsInDeck.cards)
+
+    if card1Rank >= 10:
+        cardToCompare = card1
+
+    if card2Rank >= 10:
+        cardToCompare = card2
 
 
+    if card1Rank >= 10 or card2Rank >= 10:
+        if isRankInDeck(possibleCardsInDeck, 10) and isRankInDeck(possibleCardsInDeck, 11) and isRankInDeck(possibleCardsInDeck, 12) and isRankInDeck(possibleCardsInDeck, 13) and isRankInDeck(possibleCardsInDeck, 14):
+            part1Pct = (numOf10InDeck/deckRemainingSize) * (numOfJInDeck/(deckRemainingSize - 1)) * (numOfQInDeck/(deckRemainingSize - 2)) * (numOfKInDeck/(deckRemainingSize - 3)) * (numOfAInDeck/(deckRemainingSize - 4))
+            
+            #get all royal cards that are still in deck
+            royalCards = getAllCardsOfCertainRanks(possibleCardsInDeck, ranksArr)
 
-    #if card1.rank >= 10 or card2.rank >= 10:
-        #if isRankInDeck(possibleCardsInDeck, 10) and isRankInDeck(possibleCardsInDeck, 11) and isRankInDeck(possibleCardsInDeck, 12) and isRankInDeck(possibleCardsInDeck, 13) and isRankInDeck(possibleCardsInDeck, 14):
-            #part1Pct = (numOf10InDeck/deckRemainingSize * (numOfJInDeck/deckRemainingSize-1) * (numOfQInDeck/deckRemainingSize-2) * (numOfKInDeck/deckRemainingSize -3) * (numOfAInDeck/deckRemainingSize - 4)
+            countSuits = countCardsSameSuit(possibleCardsInDeck, cardToCompare, ranksArr)
+
+            if countSuits == 4:
+                part2Pct = (1/deckRemainingSize) * (1/deckRemainingSize - 1) * (1/deckRemainingSize - 2) * (1/deckRemainingSize - 3) * (1/deckRemainingSize - 4)
+            
+            else: 
+                part2Pct = 0
+        else:
+            part1Pct = 0
+
         
-        #else:
-            #part1Pct = 0
+    royalStraightFlushPct = part1Pct * part2Pct 
+
+    return royalStraightFlushPct
 
 
-        #if isAllCardsSameSuit(possibleCardsInDeck, card10, cardJ, cardQ, cardK, cardA):
-            #part2Pct = (1/deckRemainingSize) * (1/deckRemainingSize - 1) * (1/deckRemainingSize - 2) * (1/deckRemainingSize - 3) * (1/deckRemainingSize - 4)
 
-        #else:
-            #part2Pct = 0
-
-        
-        #royalSraightFlushPct = part1Pct * part2Pct 
-
-        #return royalSraightFlushPct
+### END PROBABOLITY CALCULATIONS HERE  ####
         
 
+
+###Helper functions ####3
 
 def numOfRankInDeck(deck, rank):
+    cardRankObj = CardRank()
+    cardRankObj.addRanks()
+    cardRanks = cardRankObj.getRanks()
+
     count = 0
 
-    for card in deck:
-        if card.rank == rank:
+    for card in deck.cards:
+        cardRank = cardRanks[card.rank]
+        if cardRank == rank:
             count += 1
 
     return count
 
 def isRankInDeck(deck, rank):
+    cardRankObj = CardRank()
+    cardRankObj.addRanks()
+    cardRanks = cardRankObj.getRanks()
 
-    for card in deck:
-        if rank in deck:
+
+    for card in deck.cards:
+        cardRank = cardRanks[card.rank]
+        if rank == cardRank:
             return True
     return False
 
-def isAllCardsSameSuit (deck, card1, card2, card3, card4, card5):
-    allCardsInDeck = False
 
-    if isRankInDeck(deck, card1.rank) and isRankInDeck(deck, card2.rank) and isRankInDeck(deck, card3.rank) and isRankInDeck(deck, card4.rank) and isRankInDeck(deck, card5.rank):
+def getAllCardsOfCertainRanks(possibleCardsInDeck, ranks):
+    cardsArr = []
 
-        if card1.suit == card2.suit and card2.suit == card3.suit and card3.suit == card4.suit and card4.suit == card5.suit:
-            return True
+    cardRankObj = CardRank()
+    cardRankObj.addRanks()
+    cardRanks = cardRankObj.getRanks()
+    i = 0
+    for card in deck.cards:
+        cardRank = cardRanks[card.rank]
+        for rank in ranks:
+            if cardRank == rank:
+                cardsArr.append(card)
+                i += 1
+    
+    return cardsArr
 
-        else:
-            return False
+def countCardsSameSuit (deck, cardToCompare, ranksArr):
+
+    count = 0
+    
+    cardRankObj = CardRank()
+    cardRankObj.addRanks()
+    cardRanks = cardRankObj.getRanks()
+    countOfSameSuitCards = 0
+
+    #here is where we figure out what ranks are already in the player's hand
+    #compare cardToCompare suit to the possible cards ranks in deck
+    for card in deck.cards:
+        cardRank = cardRanks[card.rank]
+        if cardRank < 10:
+            continue
+        for rank in ranksArr:
+            if cardRank == rank:
+                if card.suit == cardToCompare.suit:
+                    #print("Hey the " + str(card.toString()) + " has the same suit as " + str(cardToCompare.toString()))
+                    count += 1
+    
+    return count
+            
 
 
+
+### These are some very bare bones functions that follow some of the steps in the model putside of the probability calculations  
 
 def bet(winningChance):
     if winningChance >= 0.65:
@@ -459,15 +611,9 @@ def revealHand(players):
             print(card)
 
 
-#def firstRound():
-
-#def secondRound():
-
-#def thirdRound():
 
 
-
-
+##### "Main method" starts here #####
 
 betLimit = 20
 
@@ -476,23 +622,24 @@ cards = []
 
 deck = Deck(cards)
 
-#player1 = Player("Sue")
-#player2 = Player("Our AI")
 
-#players = [player1, player2]
-
-
+#Add all cards to the deck
 deck.addAllCardsToDeck()
 deck = shuffleDeck(deck)
 
 AI = Player("AI")
 
-
+#The dealHoleCards function is just the first round of the dealing cards - it explains in the model that 
+# the dealer deals the flop, burn, turn, and river cards before round is completed - the deck and AI probability calculations
+#will change based on the dealing of the rest of the
 dealHoleCards(deck, AI)
 
-AI.toString()
+#uncomment this to see what's in the AI's hand
+#AI.toString()
 
-#Call each probability function
+#Call each probability function - i JUST call these functions at this point in order to see if everything is working
+#where these functions are called will be changed when we write the round simulation code
+
 pairProbability = pairProbability(deck, AI.hand)
 
 twoPairsProbability = twoPairsProbability(deck, AI.hand)
@@ -501,10 +648,17 @@ threeOfAKindProb = threeOfAKindProb(deck, AI.hand)
 
 flushProb = flushProb(deck, AI.hand)
 
-# fix full house float error
 fullHouseProb = threeOfAKindProb * pairProbability
 
 fourOfAKindProb = fourOfAKindProb(deck, AI.hand)
+
+straightProb = straightProb(deck, AI.hand)
+
+
+straightFlushProb = straightProb * flushProb
+
+
+royalStraightFlush = royalFlushProb(deck, AI.hand)
 
 
 
@@ -516,7 +670,12 @@ print("Three of a Kind: " + str(threeOfAKindProb))
 print("Flush: " + str(flushProb))
 print("Full House: " + str(fullHouseProb))
 print("Four of a Kind: " + str(fourOfAKindProb))
-#deck.toString()
+print("Straight: " + str(straightProb))
+
+#this is assuming that both cards are needed to be in the five card sequence
+print("Straight flush: " + str(straightFlushProb))
+
+print("Royal Straight Flush: " + str(royalStraightFlush))
 
 
 
